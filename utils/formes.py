@@ -79,12 +79,12 @@ def add_new_nt(regles, t_dict):
       regles[value[0]] = [[key]]
   return regles
 
-def supp_term_mb2(regles):
+def supp_term_mb2(axiome, regles):
   """
   Supprime les terminaux dans le membre droit 
   des règles de longueur au moins deux
   """
-  t_dict = t_to_nt(regles)
+  t_dict = t_to_nt(axiome, regles)
 
   for mg, mds in regles.items():
       for i in range(len(mds)):
@@ -127,9 +127,7 @@ def supp_2nt(axiome, regles):
 # 5. retirer l’axiome des membres droits des règles
 
 def retirer_axiome(axiome, regles) :
-  """Retire l’axiome des membres droits des règles"""
-  #axiome = next(iter(regles)) ########????
-  #print(axiome)
+  #axiome = next(iter(regles))
   nv_axiome = get_next_nt(axiome, regles)
   nv_regles = {axiome:[[nv_axiome]]}
 
@@ -140,7 +138,7 @@ def retirer_axiome(axiome, regles) :
         nv_membres_droit.append(nv_prod)
     nv_regles[nv_axiome] = nv_membres_droit
 
-  return axiome, nv_regles
+  return nv_axiome, nv_regles
 
 # 6. supprimer les règles unité 𝑋 → 𝑌 ;
 
@@ -175,7 +173,6 @@ def ajout_regle(regles, nterm, prod) :
 def supp_symb_term(axiome, regles) :
   """Supprime les symboles terminaux qui ne sont pas en tête des règles"""
   term_pris = get_all_term(regles)
-  new_regles = {}
   term = []
   non_term = []
   for gauche, droite in regles.items() :
@@ -204,6 +201,7 @@ def greibach(axiome, regles):
     5. supprimer les symboles terminaux qui ne sont pas en tête des règles.
 
   """
+  #+ delete recursion gauche
   #print(regles)
   #axiome, regles = retirer_axiome(axiome, regles)
   print(regles)
@@ -228,11 +226,18 @@ def chomsky(axiome, regles):
   4. supprimer les règles 𝑋 → 𝜀 sauf si 𝑋 est l’axiome ;
   5. supprimer les règles unité 𝑋 → �
   """
-  axiome, regles = retirer_axiome(axiome, regles)
+
+  #print(regles)
+  #axiome, regles = retirer_axiome(axiome, regles)
+  print(regles)
   regles = supp_term_mb2(axiome, regles)
-  regles = supp_2nt(regles)
+  print(regles)
+  regles = supp_2nt(axiome, regles)
+  print(regles)
   regles = supprimer_eps(axiome, regles)
+  print(regles)
   regles = supp_regles_unite(regles)
+  print(regles)
   return axiome, regles
 
 
@@ -242,6 +247,7 @@ def chomsky(axiome, regles):
 def print_mots_tries(mots):
   for i in range(len(mots)):
     mots[i]  = ''.join(mots[i])
+  mots = list(set(mots))
   mots.sort()
   for mot in mots:
     print(mot)
@@ -255,7 +261,7 @@ def tous_mots(len_mot, axiome, regles):
 
   has_nt = True
   while has_nt:
-    print('aaaa')
+    #print('aaaa')
     has_nt = False
     for i in range(len(mots_possibles)):
       j = 0
@@ -267,8 +273,12 @@ def tous_mots(len_mot, axiome, regles):
               nouveau_mot = mots_possibles[i][:j] + mg + mots_possibles[i][(j+1):]
               mots_retenus.append(nouveau_mot)
         j += 1
-    print(mots_retenus, has_nt)
-    mots_possibles = mots_retenus
+   
+    if mots_retenus != []:
+      print(type(mots_retenus))
+      mots_possibles = mots_retenus
+    #print(mots_possibles, has_nt)
     mots_retenus = []
-  print( regles, mots_retenus, has_nt)
+  #print( regles, mots_retenus, has_nt)
+  print(mots_possibles)
   return mots_possibles
