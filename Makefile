@@ -1,4 +1,5 @@
 PYTHON = python3
+setup ?= default
 
 test_general = tests/grammaire1.general
 test_chomsky = tests/grammaire1.chomsky
@@ -15,4 +16,9 @@ test:
 
 compare:
 	diff tests/test_4_chomsky.res tests/test_4_greibach.res
+
+setup:
+	@echo "Setting up environment with: $(setup)"
+	$(PYTHON) -m pip3 install $(setup)
+
 
