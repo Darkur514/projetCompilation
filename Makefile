@@ -1,19 +1,18 @@
 PYTHON = python3
-comp_dir = utils 
-test_dir = tests
-test_files = $(test_dir)/check_form.py
-GENERER = generer.py
-grammaires = $(test_dir)/grammaire1chomsky $(test_dir)/grammaire1.gegeral $(test_dir)/grammaire1.greibach
 
-.PHONY: all test clean run 
+test_general = tests/grammaire1.general
+test_chomsky = tests/grammaire1.chomsky
+test_greibach = tests/grammaire1.greibach
 
-all: test
+.PHONY: all test compare
+
+all: test compare
 
 test:
-	@echo "Tests en cours d'execution"
-	@$(PYTHON) $(test_files)
-run:
-	@echo "Fichier générer en cours d'execution"
-	@$(PYTHON) $(GENERER)
+	$(PYTHON) grammaire.py $(test_general)
+	$(PYTHON) generer.py 4 $(test_chomsky) > tests/test_4_chomsky.res
+	$(PYTHON) generer.py 4 $(test_greibach) > tests/test_4_greibach.res
 
+compare:
+	diff tests/test_4_chomsky.res tests/test_4_greibach.res
 

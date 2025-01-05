@@ -35,3 +35,6 @@ def verifier_Chomsky(axiome, regles):
           raise Exception("len maximal d'une regle doit etre 2 ")
         if len(mg) == 2 and not est_non_terminal(mg[0]) or est_non_terminal(mg[1]):
           raise Exception("toutes les regles de len 2 doit etre composee de nt")
+        
+        from utils.utils import est_non_terminal
+
