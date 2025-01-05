@@ -1,4 +1,4 @@
-PYTHON = python 
+PYTHON = python3
 comp_dir = utils 
 test_dir = tests
 test_files = $(test_dir)/check_form.py
