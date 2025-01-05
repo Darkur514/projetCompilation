@@ -126,19 +126,27 @@ def supp_2nt(axiome, regles):
 
 # 5. retirer l’axiome des membres droits des règles
 
-def retirer_axiome(axiome, regles) :
-  #axiome = next(iter(regles))
-  nv_axiome = get_next_nt(axiome, regles)
-  nv_regles = {axiome:[[nv_axiome]]}
+def retirer_axiome(axiome, regles):
+    nv_axiome = get_next_nt(axiome, regles)
+    nv_regles = {axiome: [[nv_axiome]]}
 
-  for non_terminal, membre_droit in regles.items() :
-    nv_membres_droit = []
-    for i in membre_droit:
-        nv_prod = [nv_axiome if symb == axiome else symb for symb in i]
-        nv_membres_droit.append(nv_prod)
-    nv_regles[nv_axiome] = nv_membres_droit
+    for non_terminal, membres_droit in regles.items():
+        nv_membres_droit = []
+        for i in membres_droit:
+            nv_prods = []
+            for j in i:
+                if j == axiome:
+                    nv_prods.append(nv_axiome)
+                else:
+                    nv_prods.append(j)
+            nv_membres_droit.append(nv_prods)
 
-  return nv_axiome, nv_regles
+        if non_terminal == axiome:
+            nv_regles[nv_axiome] = nv_membres_droit
+        else:
+            nv_regles[non_terminal] = nv_membres_droit
+
+    return nv_axiome, nv_regles
 
 # 6. supprimer les règles unité 𝑋 → 𝑌 ;
 
@@ -202,8 +210,8 @@ def greibach(axiome, regles):
 
   """
   #+ delete recursion gauche
-  #print(regles)
-  #axiome, regles = retirer_axiome(axiome, regles)
+  print(regles)
+  axiome, regles = retirer_axiome(axiome, regles)
   print(regles)
   regles = supprimer_eps(axiome, regles)
   print(regles)
@@ -227,8 +235,8 @@ def chomsky(axiome, regles):
   5. supprimer les règles unité 𝑋 → �
   """
 
-  #print(regles)
-  #axiome, regles = retirer_axiome(axiome, regles)
+  print(regles)
+  axiome, regles = retirer_axiome(axiome, regles)
   print(regles)
   regles = supp_term_mb2(axiome, regles)
   print(regles)

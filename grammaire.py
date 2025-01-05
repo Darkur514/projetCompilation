@@ -23,12 +23,13 @@ if __name__ == "__main__":
 
 
     new_axiome, new_regles = greibach(axiome, regles)
+    if debug: verifier_Greibach(new_axiome, new_regles)
     ecrire(new_axiome, new_regles, f_name+'.greibach')
-    if debug: verifier_Greibach(axiome, regles)
-
+    
     set_new_next_nt(regles_c)
     new_axiome, new_regles = chomsky(axiome, regles_c)
+    if debug: verifier_Chomsky(new_axiome, new_regles)
     ecrire(new_axiome, new_regles, f_name+'.chomsky')
-    if debug: verifier_Chomsky(axiome, regles)
+    
 
     print('Execution du grammaire.py est terminee')
