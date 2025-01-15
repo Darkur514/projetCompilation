@@ -1,4 +1,5 @@
 PYTHON = python3
+setup ?= default
 
 test_general = grammaire1.general
 test_chomsky = grammaire1.chomsky
@@ -23,5 +24,10 @@ compare:
 
 .PHONY: all setup test compare clean
 
+
+
+setup:
+	@echo "Setting up environment with: $(setup)"
+	$(PYTHON) -m pip3 install $(setup)
 
 
