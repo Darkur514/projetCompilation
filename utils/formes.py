@@ -1,5 +1,12 @@
 from utils.utils import est_non_terminal, get_next_nt, get_all_term, get_curr_nt
 
+######### regles supplementaires necessaires au changement de la forme #############
+def elliminer_rec_gauche_immediate(axiome, regle):
+   pass
+   
+
+
+
 ######### regles de changement de forme fondamentales #############
 
 
