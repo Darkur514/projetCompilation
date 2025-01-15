@@ -16,14 +16,14 @@ def get_all_term(regles):
 ################### Gestion et affichage des membres ######################
 
 def get_all_memebres_droits_nt(regles):
-    md = [] 
+    membre_droit = [] 
     for membres in regles.values():
       for membre in membres:
         for m in membre:
           if est_non_terminal(m):
-            md.append(m)
-    md = list(set(md))
-    return md
+            membre_droit.append(m)
+    membre_droit = list(set(membre_droit))
+    return membre_droit
 
 def get_all_memebres_gauches_nt(regles):
     return list(regles.keys())
@@ -110,19 +110,19 @@ def gc_nt(axiome, regles):
     to_threat = regles[axiome]
     x_to_threat = [[axiome, len(to_threat)]]
  
-    for mds in to_threat:
-        new_mds = []
-        for md in mds:
-            if est_non_terminal(md):
-                if md not in nom_changes:
-                    to_threat += regles[md]
-                    x_to_threat.append([md, len(regles[md])])
-                    nom_changes[md] = get_next_nt()
-                new_mds.append(nom_changes[md])
+    for membre_droits in to_threat:
+        new_membre_droits = []
+        for membre_droit in membre_droits:
+            if est_non_terminal(membre_droit):
+                if membre_droit not in nom_changes:
+                    to_threat += regles[membre_droit]
+                    x_to_threat.append([membre_droit, len(regles[membre_droit])])
+                    nom_changes[membre_droit] = get_next_nt()
+                new_membre_droits.append(nom_changes[membre_droit])
             else:
-                new_mds.append(md)
+                new_membre_droits.append(membre_droit)
 
-        new_regles[nom_changes[x_to_threat[0][0]]].append(new_mds)
+        new_regles[nom_changes[x_to_threat[0][0]]].append(new_membre_droits)
 
         x_to_threat[0][1] -= 1
         if x_to_threat[0][1] == 0 and len(x_to_threat)>1:
