@@ -1,7 +1,7 @@
 from utils.utils import set_new_next_nt
 
 ############### Lecture ##########################
-def lire_membre_gauche(membre_droit):
+def lire_membre_droit(membre_droit):
   """Ramene les membres droits a la bonne forme"""
   new_membre_droit = []
   i = 0
@@ -38,14 +38,15 @@ def lire(file_name):
         print(axiome, i)
         i = 1
 
-      if membre_droit in regles:
-        regles[membre_gauche].append(lire_membre_gauche(membre_droit))
+      if membre_gauche in regles:
+        regles[membre_gauche].append(lire_membre_droit(membre_droit))
       else:
-        regles[membre_gauche] = [lire_membre_gauche(membre_droit)]
+        regles[membre_gauche] = [lire_membre_droit(membre_droit)]
 
       line =f.readline()
 
   set_new_next_nt(regles)
+  #print('aaa', regles)
   return axiome, regles
 
 

@@ -1,11 +1,35 @@
 from utils.utils import est_non_terminal, get_next_nt, get_all_term, get_curr_nt
 
 ######### regles supplementaires necessaires au changement de la forme #############
-def elliminer_rec_gauche_immediate(axiome, regle):
-   pass
-   
+def elliminer_rec_gauche_immediate(axiome, regles):
+  new_regles = {}
+  for mg, mds in regles.items():
+    #new_regles[mg] = []
+    with_recursion = []
+    without_recursion = []
 
+    for md in mds:
+      if md[0] == mg:
+        with_recursion.append(md)
+      else:
+        without_recursion.append(md)
+    
+    if len(with_recursion) == 0:
+      new_regles[mg] = mds
+    else:
+      new_regles[mg] = md
+      new_mg = get_next_nt(axiome, regles)
+      for i in range(len(without_recursion)):
+        without_recursion[i].append(new_mg)
+        print('bb', without_recursion)
+      new_regles[mg] = without_recursion
 
+      for i in range(len(with_recursion)):
+        with_recursion[i].pop(0)
+        with_recursion[i].append(new_mg)
+      new_regles[new_mg] = with_recursion
+  return axiome, new_regles
+  
 
 ######### regles de changement de forme fondamentales #############
 
@@ -217,6 +241,7 @@ def greibach(axiome, regles):
 
   """
   #+ delete recursion gauche
+  elliminer_rec_gauche_immediate(axiome, regles)
   print(regles)
   axiome, regles = retirer_axiome(axiome, regles)
   print(regles)
@@ -241,7 +266,7 @@ def chomsky(axiome, regles):
   4. supprimer les règles 𝑋 → 𝜀 sauf si 𝑋 est l’axiome ;
   5. supprimer les règles unité 𝑋 → �
   """
-
+  elliminer_rec_gauche_immediate(axiome, regles)
   print(regles)
   axiome, regles = retirer_axiome(axiome, regles)
   print(regles)
