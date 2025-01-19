@@ -249,7 +249,6 @@ def appliquer_regle(etape_regle, etape, axiome, regles, debug):
   nb_tries = 0
   
   try:
-    appliquer_regle(etape_regle, 0, axiome, regles, debug)
     axiome, regles = etape_regle(axiome, regles)
     if debug: print(f'etape : {etape} ', regles, '\n')
 
