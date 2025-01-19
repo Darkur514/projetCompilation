@@ -35,7 +35,6 @@ def lire(file_name):
 
       if i == 0:
         axiome = membre_gauche
-        print(axiome, i)
         i = 1
 
       if membre_gauche in regles:

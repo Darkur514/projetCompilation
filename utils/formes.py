@@ -1,4 +1,5 @@
 from utils.utils import est_non_terminal, get_next_nt, get_all_term, get_curr_nt
+from copy import deepcopy
 
 ######### regles supplementaires necessaires au changement de la forme #############
 def elliminer_rec_gauche_immediate(axiome, regles):
@@ -17,16 +18,19 @@ def elliminer_rec_gauche_immediate(axiome, regles):
     if len(with_recursion) == 0:
       new_regles[mg] = mds
     else:
+      without_recursion_new = deepcopy(without_recursion)
       new_regles[mg] = md
       new_mg = get_next_nt(axiome, regles)
       for i in range(len(without_recursion)):
-        without_recursion[i].append(new_mg)
-        print('bb', without_recursion)
-      new_regles[mg] = without_recursion
+        if without_recursion_new[i] == ['E']:
+          without_recursion_new[i] = new_mg
+        else:
+          without_recursion_new[i].append(new_mg)
+      new_regles[mg] = without_recursion + [without_recursion_new]
 
       for i in range(len(with_recursion)):
         with_recursion[i].pop(0)
-        with_recursion[i].append(new_mg)
+        with_recursion[i].append(mg) #new_mg
       new_regles[new_mg] = with_recursion
   return axiome, new_regles
   
@@ -50,7 +54,7 @@ def change_regles_with_eps(m_with_eps, regles):
                   else:
                     to_append = md[:m_eps_idx[j]]
                   if len(to_append) == 0:
-                    to_append = ['eps']
+                    to_append = ['E']
                   if to_append not in regles[mg]:
                     regles[mg].append(to_append)
   return regles
@@ -63,9 +67,9 @@ def supprimer_eps(axiome, regles):
     for mg, mds in regles.items():
       if mg != axiome:
         for md in mds:
-          if len(md) == 1 and md[0] == 'eps':
+          if md == ['E']:
             has_eps = True
-            regles[mg].remove(['eps'])
+            regles[mg].remove(['E'])
             regles = change_regles_with_eps(mg, regles)
 
   return regles
@@ -157,7 +161,7 @@ def supp_2nt(axiome, regles):
 
 # 5. retirer l’axiome des membres droits des règles
 
-def retirer_axiome(axiome, regles):
+"""def retirer_axiome(axiome, regles):
     nv_axiome = get_next_nt(axiome, regles)
     nv_regles = {axiome: [[nv_axiome]]}
 
@@ -177,11 +181,50 @@ def retirer_axiome(axiome, regles):
         else:
             nv_regles[non_terminal] = nv_membres_droit
 
-    return nv_axiome, nv_regles
+    return nv_axiome, nv_regles"""
+
+
+def retirer_axiome(axiome, regles):
+    pseudo_axiome = get_next_nt(axiome, regles)
+    nv_regles = {axiome: [[pseudo_axiome]]}
+
+    for non_terminal, membres_droit in regles.items():
+        nv_membres_droit = []
+        for i in membres_droit:
+            nv_prods = []
+            for j in i:
+                if j == axiome:
+                    nv_prods.append(pseudo_axiome)
+                else:
+                    nv_prods.append(j)
+            nv_membres_droit.append(nv_prods)
+
+        if non_terminal == axiome:
+            nv_regles[pseudo_axiome] = nv_membres_droit
+        else:
+            nv_regles[non_terminal] = nv_membres_droit
+
+    return nv_regles
+
 
 # 6. supprimer les règles unité 𝑋 → 𝑌 ;
-
 def supp_regles_unite(regles):
+    has_unite = True
+    while has_unite:
+       has_unite = False
+       for membre_gauche, membres_droits in regles.items():
+          for i in range(len(membres_droits)):
+             if len(membres_droits[i]) == 1 and est_non_terminal(membres_droits[i][0]):
+                has_unite = True
+                Y = membres_droits[i][0]
+                del regles[membre_gauche][i] 
+                regles[membre_gauche] += regles[Y]
+    return regles
+
+    
+
+
+"""def supp_regles_unite(regles):
     nv_regles = {}
 
     for gauche in regles:
@@ -189,19 +232,25 @@ def supp_regles_unite(regles):
 
     for gauche, droit in regles.items():
         a_traiter = droit.copy() 
+
+        print(gauche, a_traiter)
+
         while a_traiter:
             regle = a_traiter.pop(0)
             if len(regle) == 1 and est_non_terminal(regle[0]):
                 if regle[0] in regles:
                     a_traiter.extend(regles[regle[0]])
+                    print('bbbb', a_traiter)
                 else:
                     if regle not in nv_regles[gauche]:
                         nv_regles[gauche].append(regle)
+                    print('ccc', nv_regles)
             else:
                 if regle not in nv_regles[gauche]:
                     nv_regles[gauche].append(regle)
+        
 
-    return nv_regles
+    return nv_regles"""
 
 
 # 7. supprimer les symboles terminaux qui ne sont pas en tête des règles
@@ -244,19 +293,20 @@ def greibach(axiome, regles, debug):
 
   """
   #+ delete recursion gauche
-  if debug: print(regles)
-  elliminer_rec_gauche_immediate(axiome, regles)
-  if debug: print('0', regles)
-  axiome, regles = retirer_axiome(axiome, regles)
-  if debug: print('1', regles)
+  if debug: print('TO GREIBACH', regles, '\n')
+  axiome, regles = elliminer_rec_gauche_immediate(axiome, regles)
+  if debug: print('etape : 0', regles, '\n')
+  regles = retirer_axiome(axiome, regles)
+  if debug: print('etape :1', regles, '\n')
   regles = supprimer_eps(axiome, regles)
-  if debug: print('2', regles)
+  print(axiome)
+  if debug: print('etape :2', regles, '\n')
   regles = supp_regles_unite(regles)
-  if debug: print('3', regles)
+  if debug: print('etape :3', regles, '\n')
   regles = supp_nt_en_tete(regles)
-  if debug: print('4', regles)
+  if debug: print('etape :4', regles, '\n')
   regles = supp_symb_term(axiome, regles)
-  if debug: print('5', regles)
+  if debug: print('etape :5', regles, '\n')
 
   return axiome, regles
 
@@ -270,19 +320,20 @@ def chomsky(axiome, regles, debug):
   4. supprimer les règles 𝑋 → 𝜀 sauf si 𝑋 est l’axiome ;
   5. supprimer les règles unité 𝑋 → �
   """
-  if debug: print(regles)
-  elliminer_rec_gauche_immediate(axiome, regles)
-  if debug: print('0', regles)
-  axiome, regles = retirer_axiome(axiome, regles)
-  if debug: print('1', regles)
+  if debug: print('TO CHOMSKY', regles, '\n')
+  axiome, regles = elliminer_rec_gauche_immediate(axiome, regles)
+  if debug: print('etape :0', regles, '\n')
+  regles = retirer_axiome(axiome, regles)
+  #print(axiome)
+  if debug: print('etape :1', regles, '\n')
   regles = supp_term_mb2(axiome, regles)
-  if debug: print('2', regles)
+  if debug: print('etape :2', regles, '\n')
   regles = supp_2nt(axiome, regles)
-  if debug: print('3', regles)
+  if debug: print('etape :3', regles, '\n')
   regles = supprimer_eps(axiome, regles)
-  if debug: print('4', regles)
+  if debug: print('etape :4', regles, '\n')
   regles = supp_regles_unite(regles)
-  if debug: print('5', regles)
+  if debug: print('etape :5', regles, '\n')
 
   return axiome, regles
 
@@ -293,12 +344,12 @@ def chomsky(axiome, regles, debug):
 def print_mots_tries(mots):
   for i in range(len(mots)):
     mots[i]  = ''.join(mots[i])
-  mots = list(set(mots))
+  #mots = list(set(mots))
   mots.sort()
   for mot in mots:
     print(mot)
 
-def tous_mots(len_mot, axiome, regles):
+"""def tous_mots(len_mot, axiome, regles):
   mots_possibles = []
   mots_retenus = []
   for md in regles[axiome]:
@@ -307,7 +358,6 @@ def tous_mots(len_mot, axiome, regles):
 
   has_nt = True
   while has_nt:
-    #print('aaaa')
     has_nt = False
     for i in range(len(mots_possibles)):
       j = 0
@@ -320,11 +370,47 @@ def tous_mots(len_mot, axiome, regles):
               mots_retenus.append(nouveau_mot)
         j += 1
    
+    print(mots_retenus)
     if mots_retenus != []:
-      print(type(mots_retenus))
-      mots_possibles = mots_retenus
-    #print(mots_possibles, has_nt)
+      mots_possibles += mots_retenus
+    else: break
     mots_retenus = []
-  #print( regles, mots_retenus, has_nt)
-  print(mots_possibles)
-  return mots_possibles
+
+  return mots_possibles"""
+
+
+
+def tous_mots(len_mot, axiome, regles):
+  mots_possibles = []
+  mots_possibles1 = []
+  mots_retenus = []
+
+  for md in regles[axiome]:
+    if len(md) <= len_mot:
+      mots_possibles.append(md)
+  i = 0
+  while len(mots_possibles) != 0:
+ 
+    for i in range(len(mots_possibles)):
+      j = 0
+      has_nt = False
+      while j < len(mots_possibles[i]):
+        if est_non_terminal(mots_possibles[i][j]):
+          has_nt = True
+          for md in regles[mots_possibles[i][j]]:
+            if md != 'E' and len(mots_possibles[i]) + len(md) <= len_mot:
+              nouveau_mot = mots_possibles[i][:j] + md + mots_possibles[i][(j+1):]
+              mots_possibles1.append(nouveau_mot)
+
+        j += 1
+      if not has_nt:
+    
+       if mots_possibles[i] not in mots_retenus:
+         mots_retenus.append(mots_possibles[i])
+ 
+    mots_possibles = mots_possibles1
+    mots_possibles1 = []
+
+
+  return mots_retenus
+

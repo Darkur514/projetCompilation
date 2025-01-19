@@ -12,6 +12,6 @@ if __name__ == "__main__":
     assert f_extension in ['.chomsky', '.greibach'] , "La grammaire doit etre soit la forme normale"
 
     axiome, regles = lire(filename)
-
-    mots = tous_mots(len_mots, axiome, regles)
+    #print(axiome, regles)
+    mots = tous_mots(len_mots+1, axiome, regles)
     print_mots_tries(mots)

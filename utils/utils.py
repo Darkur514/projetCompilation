@@ -102,10 +102,35 @@ def gc_nt(axiome, regles):
     global nt_curr_letter
     global nt_curr_number
 
-    nt_curr_letter = 65
+    nt_curr_letter = 64
     nt_curr_number = -1
 
-    new_nt = get_next_nt()
+    print(regles.keys(), 'dddddddd')
+
+    new_regles = {}
+    old_regles = {}
+    for mg, mds in regles.items():
+       if mds not in new_regles.values():
+        new_regles[mg] = mds
+       else:
+          old_regles[mg] = list(new_regles.keys())[list(new_regles.values()).index(mds)]
+    regles = new_regles
+    #print(regles)
+
+    #for r in regles.items():
+    #   print(r, '\n')
+
+    for mg, mds in regles.items():
+      for i in range(len(mds)):
+         for j in range(len(mds[i])):
+            if mds[i][j] in old_regles:
+               regles[mg][i][j] = old_regles[mds[i][j]]
+
+    #print(old_regles)
+    #for r in regles.items():
+    #   print(r, '\n')
+
+    new_nt = get_next_nt(axiome, regles)
     new_regles = {new_nt: []}
 
     nom_changes = {axiome: new_nt}
@@ -115,11 +140,12 @@ def gc_nt(axiome, regles):
     for membre_droits in to_threat:
         new_membre_droits = []
         for membre_droit in membre_droits:
+            
             if est_non_terminal(membre_droit):
                 if membre_droit not in nom_changes:
                     to_threat += regles[membre_droit]
                     x_to_threat.append([membre_droit, len(regles[membre_droit])])
-                    nom_changes[membre_droit] = get_next_nt()
+                    nom_changes[membre_droit] = get_next_nt(axiome, regles)
                 new_membre_droits.append(nom_changes[membre_droit])
             else:
                 new_membre_droits.append(membre_droit)
@@ -131,6 +157,7 @@ def gc_nt(axiome, regles):
           x_to_threat.pop(0)
           new_regles[nom_changes[x_to_threat[0][0]]] = []
 
-        
-    return(new_regles)
+    
+    #print(new_regles)
+    return new_nt, new_regles
 
