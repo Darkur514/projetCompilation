@@ -1,14 +1,12 @@
 PYTHON = python3
 setup ?= default
 
-test_general = grammaire1.general
-test_chomsky = grammaire1.chomsky
-test_greibach = grammaire1.greibach
-test_dir = tests
+test_general = test1.general
+test_chomsky = test1.chomsky
+test_greibach = test1.greibach
+test_dir = custom_tests
 
 .default_goal := all
-
-setup: pip install os sys copy
 
 clean: rm -rf __pycache__ utils/__pycache__
 
@@ -23,8 +21,6 @@ compare:
 	diff $(test_dir)/test_4_chomsky.res $(test_dir)/test_4_greibach.res
 
 .PHONY: all setup test compare clean
-
-
 
 setup:
 	@echo "Setting up environment with: $(setup)"
