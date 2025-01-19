@@ -1,4 +1,4 @@
-def est_non_terminal(X): ### redo voir est_terminal
+def est_non_terminal(X): 
     """Renvoie True si X est non terminal False sinon"""
     if len(X) == 2 and ord(X[0]) in range(65, 91) and ord(X[1]) in range(48, 58): #epsilon = 'eps'
         return True
