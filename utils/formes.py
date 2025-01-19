@@ -2,7 +2,7 @@ from utils.utils import est_non_terminal, get_next_nt, get_all_term, get_curr_nt
 from copy import deepcopy
 
 ######### regles supplementaires necessaires au changement de la forme #############
-def elliminer_rec_gauche_immediate(axiome, regles):
+"""def elliminer_rec_gauche_immediate(axiome, regles):
   new_regles = {}
   for mg, mds in regles.items():
     #new_regles[mg] = []
@@ -19,7 +19,7 @@ def elliminer_rec_gauche_immediate(axiome, regles):
       new_regles[mg] = mds
     else:
       without_recursion_new = deepcopy(without_recursion)
-      new_regles[mg] = md
+      #new_regles[mg] = md
       new_mg = get_next_nt(axiome, regles)
       for i in range(len(without_recursion)):
         if without_recursion_new[i] == ['E']:
@@ -31,6 +31,36 @@ def elliminer_rec_gauche_immediate(axiome, regles):
       for i in range(len(with_recursion)):
         with_recursion[i].pop(0)
         with_recursion[i].append(mg) #new_mg
+      new_regles[new_mg] = with_recursion
+  return axiome, new_regles"""
+
+def elliminer_rec_gauche_immediate(axiome, regles):
+  new_regles = {}
+  for mg, mds in regles.items():
+    with_recursion = []
+    without_recursion = []
+
+    for md in mds:
+      if md[0] == mg:
+        with_recursion.append(md)
+      else:
+        without_recursion.append(md)
+    
+    if len(with_recursion) == 0:
+      new_regles[mg] = mds
+    else:
+      new_mg = get_next_nt(axiome, regles)
+      for i in range(len(without_recursion)):
+        if without_recursion[i] == ['E']:
+          without_recursion[i] = new_mg
+        else:
+          without_recursion[i].append(new_mg)
+      new_regles[mg] = without_recursion
+
+      for i in range(len(with_recursion)):
+        with_recursion[i].pop(0)
+        with_recursion[i].append(new_mg) 
+      with_recursion.append('E')
       new_regles[new_mg] = with_recursion
   return axiome, new_regles
   
@@ -390,22 +420,20 @@ def tous_mots(len_mot, axiome, regles):
       mots_possibles.append(md)
   i = 0
   while len(mots_possibles) != 0:
+
  
     for i in range(len(mots_possibles)):
       j = 0
-      has_nt = False
+     
       while j < len(mots_possibles[i]):
         if est_non_terminal(mots_possibles[i][j]):
-          has_nt = True
           for md in regles[mots_possibles[i][j]]:
             if md != 'E' and len(mots_possibles[i]) + len(md) <= len_mot:
               nouveau_mot = mots_possibles[i][:j] + md + mots_possibles[i][(j+1):]
               mots_possibles1.append(nouveau_mot)
-
+          break
         j += 1
-      if not has_nt:
-    
-       if mots_possibles[i] not in mots_retenus:
+      if len(mots_possibles[i]) == j:
          mots_retenus.append(mots_possibles[i])
  
     mots_possibles = mots_possibles1
