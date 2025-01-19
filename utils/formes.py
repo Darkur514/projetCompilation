@@ -182,18 +182,21 @@ def retirer_axiome(axiome, regles):
 # 6. supprimer les règles unité 𝑋 → 𝑌 ;
 
 def supp_regles_unite(regles):
-    """Supprime les règles unité 𝑋 → 𝑌"""
     nv_regles = {}
 
     for gauche in regles:
         nv_regles[gauche] = []
 
     for gauche, droit in regles.items():
-        a_traiter = droit
+        a_traiter = droit.copy() 
         while a_traiter:
             regle = a_traiter.pop(0)
             if len(regle) == 1 and est_non_terminal(regle[0]):
-                a_traiter.extend(regles[regle[0]])
+                if regle[0] in regles:
+                    a_traiter.extend(regles[regle[0]])
+                else:
+                    if regle not in nv_regles[gauche]:
+                        nv_regles[gauche].append(regle)
             else:
                 if regle not in nv_regles[gauche]:
                     nv_regles[gauche].append(regle)
