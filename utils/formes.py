@@ -85,7 +85,7 @@ def supp_nt_en_tete(regles):
           nt = md[0]
           suite = md[1:]
           regles[mg].remove(md)
-          for membre in regles[md[0]]:
+          for membre in regles[nt]:
             if membre+suite not in regles[mg]:
               regles[mg].append(membre+suite)
   return regles
@@ -229,7 +229,7 @@ def supp_symb_term(axiome, regles) :
   return regles
 
 ################# Formes normaux ##########################
-def greibach(axiome, regles):
+def greibach(axiome, regles, debug):
   """
   Retourne la grammaire sous la forme de Greibach.
   Applique:
@@ -241,22 +241,23 @@ def greibach(axiome, regles):
 
   """
   #+ delete recursion gauche
+  if debug: print(regles)
   elliminer_rec_gauche_immediate(axiome, regles)
-  print(regles)
+  if debug: print('0', regles)
   axiome, regles = retirer_axiome(axiome, regles)
-  print(regles)
+  if debug: print('1', regles)
   regles = supprimer_eps(axiome, regles)
-  print(regles)
+  if debug: print('2', regles)
   regles = supp_regles_unite(regles)
-  print(regles)
+  if debug: print('3', regles)
   regles = supp_nt_en_tete(regles)
-  print(regles)
+  if debug: print('4', regles)
   regles = supp_symb_term(axiome, regles)
-  print(regles)
+  if debug: print('5', regles)
 
   return axiome, regles
 
-def chomsky(axiome, regles):
+def chomsky(axiome, regles, debug):
   """
   Retourne la grammaire sous la forme de Chomsky.
   Applique:
@@ -266,18 +267,20 @@ def chomsky(axiome, regles):
   4. supprimer les règles 𝑋 → 𝜀 sauf si 𝑋 est l’axiome ;
   5. supprimer les règles unité 𝑋 → �
   """
+  if debug: print(regles)
   elliminer_rec_gauche_immediate(axiome, regles)
-  print(regles)
+  if debug: print('0', regles)
   axiome, regles = retirer_axiome(axiome, regles)
-  print(regles)
+  if debug: print('1', regles)
   regles = supp_term_mb2(axiome, regles)
-  print(regles)
+  if debug: print('2', regles)
   regles = supp_2nt(axiome, regles)
-  print(regles)
+  if debug: print('3', regles)
   regles = supprimer_eps(axiome, regles)
-  print(regles)
+  if debug: print('4', regles)
   regles = supp_regles_unite(regles)
-  print(regles)
+  if debug: print('5', regles)
+
   return axiome, regles
 
 
@@ -295,9 +298,9 @@ def print_mots_tries(mots):
 def tous_mots(len_mot, axiome, regles):
   mots_possibles = []
   mots_retenus = []
-  for mg in regles[axiome]:
-    if len(mg) <= len_mot:
-      mots_possibles.append(mg)
+  for md in regles[axiome]:
+    if len(md) <= len_mot:
+      mots_possibles.append(md)
 
   has_nt = True
   while has_nt:
@@ -308,9 +311,9 @@ def tous_mots(len_mot, axiome, regles):
       while j < len(mots_possibles[i]):
         if est_non_terminal(mots_possibles[i][j]):
           has_nt = True
-          for mg in regles[mots_possibles[i][j]]:
-            if len(mots_possibles[i]) + len(mg) <= len_mot:
-              nouveau_mot = mots_possibles[i][:j] + mg + mots_possibles[i][(j+1):]
+          for md in regles[mots_possibles[i][j]]:
+            if len(mots_possibles[i]) + len(md) <= len_mot:
+              nouveau_mot = mots_possibles[i][:j] + md + mots_possibles[i][(j+1):]
               mots_retenus.append(nouveau_mot)
         j += 1
    

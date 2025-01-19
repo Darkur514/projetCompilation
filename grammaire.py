@@ -11,7 +11,7 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     debug = False
     try: 
-        debug = int(sys.argv[2])
+        debug = int(sys.argv[2]) 
         if debug: print('Debug mode on')
     except: pass
 
@@ -22,12 +22,12 @@ if __name__ == "__main__":
     regles_c = deepcopy(regles)
 
 
-    new_axiome, new_regles = greibach(axiome, regles)
+    new_axiome, new_regles = greibach(axiome, regles, debug)
     if debug: verifier_Greibach(new_axiome, new_regles)
     ecrire(new_axiome, new_regles, f_name+'.greibach')
     
     set_new_next_nt(regles_c)
-    new_axiome, new_regles = chomsky(axiome, regles_c)
+    new_axiome, new_regles = chomsky(axiome, regles_c, debug)
     if debug: verifier_Chomsky(new_axiome, new_regles)
     ecrire(new_axiome, new_regles, f_name+'.chomsky')
     

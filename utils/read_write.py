@@ -10,7 +10,7 @@ def lire_membre_droit(membre_droit):
       new_membre_droit.append(membre_droit[i])
       i += 1
     elif membre_droit[i] == 'E':
-      new_membre_droit.append('eps')
+      new_membre_droit.append('E')
       i += 1
     else:
       new_membre_droit.append(membre_droit[i:i+2])

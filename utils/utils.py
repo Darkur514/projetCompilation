@@ -53,6 +53,8 @@ def get_next_nt(axiome, regles):
         nt_curr_number = (nt_curr_number+1)%10
         if nt_curr_number == 0:
             nt_curr_letter += 1
+            if nt_curr_letter == 69: #E
+               nt_curr_letter += 1
 
         next_nt =  chr(nt_curr_letter) + str(nt_curr_number)
         curr_nt = next_nt
@@ -87,7 +89,7 @@ def set_new_next_nt(regles):
 
 #################### Collecte des non terminaux non utilises ################
 
-#todo memmbre droits identiques
+#todo membre droits identiques
 def gc_nt(axiome, regles): 
     """
     supprimer les non terminaux s'ils
@@ -101,7 +103,7 @@ def gc_nt(axiome, regles):
     global nt_curr_number
 
     nt_curr_letter = 65
-    nt_curr_number = 0
+    nt_curr_number = -1
 
     new_nt = get_next_nt()
     new_regles = {new_nt: []}
