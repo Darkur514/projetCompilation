@@ -38,8 +38,7 @@ def elliminer_rec_gauche_immediate(axiome, regles):
 # 1. Supprime les règles 𝑋 → 𝜀 sauf si 𝑋 est l’axiome
 def change_regles_with_eps(m_with_eps, regles):
   for mg, mds in regles.items():
-    if mg != m_with_eps:
-      for md in mds:
+    for md in mds:
         occurences = md.count(m_with_eps)
         if occurences > 0:
           m_eps_idx = [i for i, x in enumerate(md) if x == m_with_eps]

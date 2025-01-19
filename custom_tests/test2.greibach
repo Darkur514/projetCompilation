@@ -3,7 +3,9 @@ A0 : bA0A1
 A0 : a 
 A0 : aA2 
 A1 : b 
-A2 : bA0A1A2A2 
 A2 : bA0A1A2 
+A2 : bA0A1 
+A2 : a 
+A2 : bA0A1A2A2 
 A2 : aA2 
 A2 : aA2A2 
