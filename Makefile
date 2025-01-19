@@ -1,10 +1,9 @@
 PYTHON = python3
 setup ?= default
 
-test_general = test1.general
-test_chomsky = test1.chomsky
-test_greibach = test1.greibach
+grammar_file = test1
 test_dir = custom_tests
+len_mots = 4
 
 .default_goal := all
 
@@ -18,11 +17,11 @@ clean:
 all: setup test compare
 
 test:
-	$(PYTHON) grammaire.py $(test_dir)/$(test_general)
-	$(PYTHON) generer.py 4 $(test_dir)/$(test_chomsky) > $(test_dir)/test_4_chomsky.res
-	$(PYTHON) generer.py 4 $(test_dir)/$(test_greibach) > $(test_dir)/test_4_greibach.res
+	$(PYTHON) grammaire.py $(test_dir)/$(grammar_file).general
+	$(PYTHON) generer.py $(len_mots) $(test_dir)/$(grammar_file).chomsky > $(test_dir)/test_$(len_mots)_chomsky.res
+	$(PYTHON) generer.py $(len_mots) $(test_dir)/$(grammar_file).greibach > $(test_dir)/test_$(len_mots)_greibach.res
 
 compare:
-	diff $(test_dir)/test_4_chomsky.res $(test_dir)/test_4_greibach.res
+	diff $(test_dir)/test_$(len_mots)_chomsky.res $(test_dir)/test_$(len_mots)_greibach.res
 
 .PHONY: all setup test compare clean
