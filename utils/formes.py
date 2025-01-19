@@ -291,23 +291,32 @@ def ajout_regle(regles, nterm, prod) :
     regles[nterm] = [[prod]]
   return regles
 
-def supp_symb_term(axiome, regles) :
-  """Supprime les symboles terminaux qui ne sont pas en tête des règles"""
-  term_pris = get_all_term(regles)
-  term = []
-  non_term = []
-  for gauche, droite in regles.items() :
-        for i in droite :
-          for j in range(1, len(i)) :
-            if i[j] in term_pris :
-              term.append(i[j])
-              i.pop(j)
-              k = get_next_nt(axiome, regles)
-              i.insert(j, k)
-              non_term.append(k)
 
-  for i in range(len(term)):
-     ajout_regle(regles, non_term[i], term[i])
+def supp_symb_term(regles) :
+  """Supprime les symboles terminaux qui ne sont pas en tête des règles"""
+
+  term = []
+
+  term_pris = get_all_term(regles)
+  for i in term_pris :
+    if i not in term :
+      term.append(i)
+
+  new_regles = {}
+ 
+  for i in range(len(term)) :
+    nv_non_term = get_next_nt()
+    ajout_regle(regles, nv_non_term, term[i])
+    new_regles[nv_non_term] = term[i]
+  
+  for gauche, droite in regles.items() :
+      for i in droite :
+        for j in range(1, len(i)) :
+          if i[j] in term :
+            for g, d in new_regles.items() :
+              if i[j] == d :
+                i[j] = g
+
   return regles
 
 ################# Formes normaux ##########################
