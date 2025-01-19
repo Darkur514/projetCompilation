@@ -1,6 +1,8 @@
 A0 : E 
-A0 : A1A2 
+A0 : A3A1 
 A0 : a 
-A1 : a 
-A2 : A1A2 
+A2 : A3A1 
 A2 : a 
+A1 : A3A1 
+A1 : a 
+A3 : a 

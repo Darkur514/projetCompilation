@@ -45,7 +45,6 @@ def lire(file_name):
       line =f.readline()
 
   set_new_next_nt(regles)
-  #print('aaa', regles)
   return axiome, regles
 
 

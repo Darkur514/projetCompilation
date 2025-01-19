@@ -40,25 +40,30 @@ nt_curr_letter = 65
 nt_curr_number = 0
 curr_nt = 'A0'
 
-def get_next_nt(axiome, regles):
+class LimitException(Exception):
+    def __init__(self):
+        self.message = 'La limit des non terminaux est atteinte'
+
+    def __str__(self):
+        return self.message
+  
+
+def get_next_nt():
     """Creation d'un nouveau non terminal pas encore utilise"""
     global nt_curr_letter
     global nt_curr_number
     global curr_nt
     if nt_curr_letter == 90 and nt_curr_number == 9: #Z = 90
-      gc_nt(axiome, regles)
-      if nt_curr_letter == 90 and nt_curr_number == 9: 
-        raise Exception("La limit des non terminaux est atteinte")
-    else:
-        nt_curr_number = (nt_curr_number+1)%10
-        if nt_curr_number == 0:
-            nt_curr_letter += 1
-            if nt_curr_letter == 69: #E
-               nt_curr_letter += 1
-
-        next_nt =  chr(nt_curr_letter) + str(nt_curr_number)
-        curr_nt = next_nt
-        return next_nt
+      raise LimitException()
+    
+    nt_curr_number = (nt_curr_number+1)%10
+    if nt_curr_number == 0:
+        nt_curr_letter += 1
+        if nt_curr_letter == 69: #E
+           nt_curr_letter += 1
+    next_nt =  chr(nt_curr_letter) + str(nt_curr_number)
+    curr_nt = next_nt
+    return next_nt
 
 def get_curr_nt():
   """Renvoie le nom du dernier non terminal cree"""
@@ -89,7 +94,7 @@ def set_new_next_nt(regles):
 
 #################### Collecte des non terminaux non utilises ################
 
-#todo membre droits identiques
+
 def gc_nt(axiome, regles): 
     """
     supprimer les non terminaux s'ils
@@ -105,7 +110,6 @@ def gc_nt(axiome, regles):
     nt_curr_letter = 64
     nt_curr_number = -1
 
-    print(regles.keys(), 'dddddddd')
 
     new_regles = {}
     old_regles = {}
@@ -113,12 +117,8 @@ def gc_nt(axiome, regles):
        if mds not in new_regles.values():
         new_regles[mg] = mds
        else:
-          old_regles[mg] = list(new_regles.keys())[list(new_regles.values()).index(mds)]
+        old_regles[mg] = list(new_regles.keys())[list(new_regles.values()).index(mds)]
     regles = new_regles
-    #print(regles)
-
-    #for r in regles.items():
-    #   print(r, '\n')
 
     for mg, mds in regles.items():
       for i in range(len(mds)):
@@ -126,11 +126,8 @@ def gc_nt(axiome, regles):
             if mds[i][j] in old_regles:
                regles[mg][i][j] = old_regles[mds[i][j]]
 
-    #print(old_regles)
-    #for r in regles.items():
-    #   print(r, '\n')
 
-    new_nt = get_next_nt(axiome, regles)
+    new_nt = get_next_nt()
     new_regles = {new_nt: []}
 
     nom_changes = {axiome: new_nt}
@@ -145,7 +142,7 @@ def gc_nt(axiome, regles):
                 if membre_droit not in nom_changes:
                     to_threat += regles[membre_droit]
                     x_to_threat.append([membre_droit, len(regles[membre_droit])])
-                    nom_changes[membre_droit] = get_next_nt(axiome, regles)
+                    nom_changes[membre_droit] = get_next_nt()
                 new_membre_droits.append(nom_changes[membre_droit])
             else:
                 new_membre_droits.append(membre_droit)
@@ -157,7 +154,5 @@ def gc_nt(axiome, regles):
           x_to_threat.pop(0)
           new_regles[nom_changes[x_to_threat[0][0]]] = []
 
-    
-    #print(new_regles)
     return new_nt, new_regles
 
