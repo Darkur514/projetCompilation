@@ -8,7 +8,12 @@ test_dir = custom_tests
 
 .default_goal := all
 
-clean: rm -rf __pycache__ utils/__pycache__
+setup:
+	@echo "Setting up environment with: $(setup)"
+	$(PYTHON) -m pip install $(setup)
+	
+clean:
+	rm -rf __pycache__ utils/__pycache__
 
 all: setup test compare
 
@@ -21,9 +26,3 @@ compare:
 	diff $(test_dir)/test_4_chomsky.res $(test_dir)/test_4_greibach.res
 
 .PHONY: all setup test compare clean
-
-setup:
-	@echo "Setting up environment with: $(setup)"
-	$(PYTHON) -m pip3 install $(setup)
-
-
